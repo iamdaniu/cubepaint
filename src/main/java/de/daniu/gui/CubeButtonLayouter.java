@@ -1,6 +1,5 @@
 package de.daniu.gui;
 
-import de.daniu.CubeManager;
 import de.daniu.SelectedColorService;
 import de.daniu.domain.Cube;
 import de.daniu.domain.CubeColor;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.Function;
 
+import static de.daniu.CubeManager.CUBE_MANAGER;
 import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
 
 class CubeButtonLayouter {
@@ -83,11 +83,19 @@ class CubeButtonLayouter {
         button.setPreferredSize(dimension);
         button.addActionListener(e -> {
             CubeColor color = SelectedColorService.SELECTED_COLORS.getSelected();
-            CubeFace face = getFace.apply(CubeManager.CUBE_MANAGER.getSelectedCube());
+            CubeFace face = getFace.apply(CUBE_MANAGER.getSelectedCube());
             face.setColor(index, color);
-            button.setBackground(COLOR_MAPPER.getColor(face.getColor(index)));
+            button.setBackground(getColor(getFace, index));
         });
-        button.setBackground(COLOR_MAPPER.getColor(getFace.apply(CubeManager.CUBE_MANAGER.getSelectedCube()).getColor(index)));
+        button.setBackground(getColor(getFace, index));
+        CUBE_MANAGER.addSelectionListener(n -> {
+            Cube c = CUBE_MANAGER.getSelectedCube();
+            button.setBackground(getColor(getFace, index));
+        });
         return button;
+    }
+
+    private static Color getColor(Function<Cube, CubeFace> getFace, int index) {
+        return COLOR_MAPPER.getColor(getFace.apply(CUBE_MANAGER.getSelectedCube()).getColor(index));
     }
 }

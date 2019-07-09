@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public enum CubeManager {
     CUBE_MANAGER;
 
     private Map<String, Cube> cubes = new LinkedHashMap<>();
-    private List<SelectionListener> listeners = new ArrayList<>();
+    private List<CubeListener> selectionListeners = new ArrayList<>();
+    private List<CubeListener> addListeners = new ArrayList<>();
     private String selectedCubename;
 
     public void selectCube(String name) {
         selectedCubename = name;
-        listeners.forEach(l -> l.cubeSelected(selectedCubename));
+        selectionListeners.forEach(l -> l.accept(selectedCubename));
     }
     public String getSelectedCubename() {
         return selectedCubename;
@@ -30,6 +32,7 @@ public enum CubeManager {
         if (selectedCubename == null) {
             selectCube(cubename);
         }
+        addListeners.forEach(l -> l.accept(cubename));
     }
     public List<String> getCubenames() {
         return new ArrayList<>(cubes.keySet());
@@ -38,11 +41,13 @@ public enum CubeManager {
         return cubes.get(name);
     }
 
-    public void addListener(SelectionListener listener) {
-        listeners.add(listener);
+    public void addSelectionListener(CubeListener listener) {
+        selectionListeners.add(listener);
+    }
+    public void addAddListener(CubeListener listener) {
+        addListeners.add(listener);
     }
 
-    public interface SelectionListener {
-        void cubeSelected(String name);
+    public interface CubeListener extends Consumer<String> {
     }
 }

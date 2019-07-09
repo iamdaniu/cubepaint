@@ -21,6 +21,7 @@ public class Frames {
     public static JFrame mainFrame() {
         JFrame frame = new JFrame("default");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        CUBE_MANAGER.addSelectionListener(frame::setTitle);
 
         frame.getContentPane().setLayout(new BorderLayout());
         JComponent cubeContainer = new JPanel();
