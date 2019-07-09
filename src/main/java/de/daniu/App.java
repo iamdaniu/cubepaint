@@ -2,8 +2,9 @@ package de.daniu;
 
 import de.daniu.domain.Cube;
 import de.daniu.gui.Frames;
+import de.daniu.gui.Navigation;
 
-import javax.swing.*;
+import java.util.stream.Stream;
 
 /**
  *
@@ -13,12 +14,13 @@ public class App {
         Cube cube = new Cube();
         CubeManager.CUBE_MANAGER.addCube("default", cube);
 
-        JFrame frame = Frames.mainFrame(cube);
-        frame.pack();
-        frame.setVisible(true);
-
-        JFrame paletteFrame = Frames.paletteFrame();
-        paletteFrame.pack();
-        paletteFrame.setVisible(true);
+        Stream.of(
+            Frames.mainFrame(),
+            Frames.paletteFrame(),
+            Navigation.navigationFrame()
+        ).forEach(f -> {
+             f.pack();
+             f.setVisible(true);
+         });
     }
 }

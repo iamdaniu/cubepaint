@@ -1,5 +1,6 @@
 package de.daniu.gui;
 
+import de.daniu.CubeManager;
 import de.daniu.SelectedColorService;
 import de.daniu.domain.Cube;
 import de.daniu.domain.CubeColor;
@@ -7,6 +8,7 @@ import de.daniu.domain.CubeFace;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Function;
 
 import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
 
@@ -14,48 +16,48 @@ class CubeButtonLayouter {
 
     private static final int SIDE_BUTTON_COUNT = 3;
 
-    static void toComponent(Cube cube, Container component) {
+    static void toComponent(Container component) {
         component.setLayout(new BorderLayout());
-        component.add(leftFaceButtons(cube), BorderLayout.WEST);
-        component.add(topFaceButtons(cube), BorderLayout.CENTER);
-        component.add(rightFaceButtons(cube), BorderLayout.EAST);
-        component.add(frontFaceButtons(cube), BorderLayout.SOUTH);
-        component.add(backFaceButtons(cube), BorderLayout.NORTH);
+        component.add(leftFaceButtons(), BorderLayout.WEST);
+        component.add(topFaceButtons(), BorderLayout.CENTER);
+        component.add(rightFaceButtons(), BorderLayout.EAST);
+        component.add(frontFaceButtons(), BorderLayout.SOUTH);
+        component.add(backFaceButtons(), BorderLayout.NORTH);
     }
 
-    private static JComponent topFaceButtons(Cube cube) {
-        return buttons(cube.getUp(), new Dimension(40, 40), new GridLayout(3, 3), 9);
+    private static JComponent topFaceButtons() {
+        return buttons(Cube::getUp, new Dimension(40, 40), new GridLayout(3, 3), 9);
     }
 
-    private static JComponent leftFaceButtons(Cube cube) {
-        return buttons(cube.getLeft(), leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
+    private static JComponent leftFaceButtons() {
+        return buttons(Cube::getLeft, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
 
-    private static JComponent rightFaceButtons(Cube cube) {
-        return inverseButtons(cube.getRight(), leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
+    private static JComponent rightFaceButtons() {
+        return inverseButtons(Cube::getRight, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
 
-    private static JComponent frontFaceButtons(Cube cube) {
-        return buttons(cube.getFront(), frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
+    private static JComponent frontFaceButtons() {
+        return buttons(Cube::getFront, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
 
-    private static JComponent backFaceButtons(Cube cube) {
-        return inverseButtons(cube.getBack(), frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
+    private static JComponent backFaceButtons() {
+        return inverseButtons(Cube::getBack, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
 
-    private static JComponent buttons(CubeFace face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
+    private static JComponent buttons(Function<Cube, CubeFace> getFace, Dimension buttonSize, LayoutManager manager, int buttonCount) {
         JComponent component = new JPanel(manager);
         for (int i = 0; i < buttonCount; i++) {
-            component.add(colorButton(face, i, buttonSize));
+            component.add(colorButton(getFace, i, buttonSize));
         }
         return component;
     }
 
-    private static JComponent inverseButtons(CubeFace face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
+    private static JComponent inverseButtons(Function<Cube, CubeFace> getFace, Dimension buttonSize, LayoutManager manager, int buttonCount) {
         JComponent component = new JPanel(manager);
         // will only work for side button panel...
         for (int i = 2; i >= 0; i--) {
-            component.add(colorButton(face, i, buttonSize));
+            component.add(colorButton(getFace, i, buttonSize));
         }
         return component;
     }
@@ -76,15 +78,16 @@ class CubeButtonLayouter {
         return new GridLayout(1, 3);
     }
 
-    private static JButton colorButton(CubeFace face, int index, Dimension dimension) {
+    private static JButton colorButton(Function<Cube, CubeFace> getFace, int index, Dimension dimension) {
         JButton button = new JButton();
         button.setPreferredSize(dimension);
         button.addActionListener(e -> {
             CubeColor color = SelectedColorService.SELECTED_COLORS.getSelected();
+            CubeFace face = getFace.apply(CubeManager.CUBE_MANAGER.getSelectedCube());
             face.setColor(index, color);
             button.setBackground(COLOR_MAPPER.getColor(face.getColor(index)));
         });
-        button.setBackground(COLOR_MAPPER.getColor(face.getColor(index)));
+        button.setBackground(COLOR_MAPPER.getColor(getFace.apply(CubeManager.CUBE_MANAGER.getSelectedCube()).getColor(index)));
         return button;
     }
 }
