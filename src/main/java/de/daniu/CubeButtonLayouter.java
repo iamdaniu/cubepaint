@@ -19,17 +19,21 @@ class CubeButtonLayouter {
     private static JComponent topFaceButtons(Cube cube) {
         return buttons(cube.getUp(), new Dimension(40, 40), new GridLayout(3, 3), 9);
     }
+
     private static JComponent leftFaceButtons(Cube cube) {
         return buttons(cube.getLeft(), leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
+
     private static JComponent rightFaceButtons(Cube cube) {
-        return buttons(cube.getRight(), leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
+        return inverseButtons(cube.getRight(), leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
+
     private static JComponent frontFaceButtons(Cube cube) {
         return buttons(cube.getFront(), frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
+
     private static JComponent backFaceButtons(Cube cube) {
-        return buttons(cube.getBack(), frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
+        return inverseButtons(cube.getBack(), frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
 
     private static JComponent buttons(CubeFace face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
@@ -40,15 +44,27 @@ class CubeButtonLayouter {
         return component;
     }
 
+    private static JComponent inverseButtons(CubeFace face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
+        JComponent component = new JPanel(manager);
+        // will only work for side button panel...
+        for (int i = 2; i >= 0; i--) {
+            component.add(colorButton(face, i, buttonSize));
+        }
+        return component;
+    }
+
     private static Dimension leftRightSize() {
         return new Dimension(20, 40);
     }
+
     private static Dimension frontBackSize() {
         return new Dimension(40, 20);
     }
+
     private static LayoutManager leftRightLayout() {
         return new GridLayout(3, 1);
     }
+
     private static LayoutManager frontBackLayout() {
         return new GridLayout(1, 3);
     }
@@ -59,7 +75,7 @@ class CubeButtonLayouter {
         button.addActionListener(e -> {
             CubeColor color = SelectedColorService.INSTANCE.getSelected();
             face.setColor(index, color);
-            button.setBackground(color.getColor());
+            button.setBackground(face.getColor(index).getColor());
         });
         button.setBackground(face.getColor(index).getColor());
         return button;

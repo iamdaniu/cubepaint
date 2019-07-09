@@ -15,24 +15,35 @@ import static java.util.stream.Collectors.joining;
  */
 public class App {
     public static void main(String[] args) {
-        JFrame frame = new JFrame("painter");
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        Cube cube = new Cube();
+        CubeManager.INSTANCE.addCube("default", cube);
 
-        Cube cube = CubeManager.INSTANCE.getCube();
+        JFrame frame = new JFrame("default");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         frame.getContentPane().setLayout(new BorderLayout());
-        JComponent buttonContainer = new JPanel();
-        frame.getContentPane().add(buttonContainer, BorderLayout.CENTER);
-        JComponent paletteContainer = new JPanel();
-        frame.getContentPane().add(paletteContainer, BorderLayout.NORTH);
+        JComponent cubeContainer = new JPanel();
+        frame.getContentPane().add(cubeContainer, BorderLayout.CENTER);
         JComponent commandContainer = new JPanel(new BorderLayout());
         layoutCommandContainer(frame, cube, commandContainer);
 
-        CubeButtonLayouter.toComponent(cube, buttonContainer);
-        layoutPalette(paletteContainer);
+        CubeButtonLayouter.toComponent(cube, cubeContainer);
 
         frame.pack();
         frame.setVisible(true);
+
+        JFrame paletteFrame = paletteFrame();
+        paletteFrame.pack();
+        paletteFrame.setVisible(true);
+    }
+
+    private static JFrame paletteFrame() {
+        JFrame frame = new JFrame("palette");
+        JComponent paletteContainer = new JPanel();
+        frame.getContentPane().add(paletteContainer, BorderLayout.CENTER);
+        layoutPalette(paletteContainer);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        return frame;
     }
 
     private static void layoutCommandContainer(JFrame frame, Cube cube, JComponent commandContainer) {
