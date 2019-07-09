@@ -1,7 +1,9 @@
 package de.daniu;
 
+import de.daniu.domain.CubeColor;
+
 public enum SelectedColorService {
-    INSTANCE;
+    SELECTED_COLORS;
 
     private CubeColor selected = CubeColor.YELLOW;
 

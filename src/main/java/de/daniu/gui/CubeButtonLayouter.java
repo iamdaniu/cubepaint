@@ -1,7 +1,14 @@
-package de.daniu;
+package de.daniu.gui;
+
+import de.daniu.SelectedColorService;
+import de.daniu.domain.Cube;
+import de.daniu.domain.CubeColor;
+import de.daniu.domain.CubeFace;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
 
 class CubeButtonLayouter {
 
@@ -73,12 +80,11 @@ class CubeButtonLayouter {
         JButton button = new JButton();
         button.setPreferredSize(dimension);
         button.addActionListener(e -> {
-            CubeColor color = SelectedColorService.INSTANCE.getSelected();
+            CubeColor color = SelectedColorService.SELECTED_COLORS.getSelected();
             face.setColor(index, color);
-            button.setBackground(face.getColor(index).getColor());
+            button.setBackground(COLOR_MAPPER.getColor(face.getColor(index)));
         });
-        button.setBackground(face.getColor(index).getColor());
+        button.setBackground(COLOR_MAPPER.getColor(face.getColor(index)));
         return button;
     }
-
 }

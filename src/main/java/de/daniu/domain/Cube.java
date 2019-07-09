@@ -1,8 +1,8 @@
-package de.daniu;
+package de.daniu.domain;
 
 import java.util.stream.Stream;
 
-class Cube {
+public class Cube {
     private CubeFace up = CubeFace.filled(CubeColor.YELLOW);
     private CubeFace left = CubeFace.filled(CubeColor.GREEN);
     private CubeFace right = CubeFace.filled(CubeColor.BLUE);
@@ -10,27 +10,27 @@ class Cube {
     private CubeFace front = CubeFace.filled(CubeColor.ORANGE);
     private CubeFace down = CubeFace.filled(CubeColor.WHITE);
 
-    Stream<CubeFace> getFaces() {
+    public Stream<CubeFace> getFaces() {
         return Stream.of(up, right, front, down, left, back);
     }
 
-    CubeFace getUp() {
+    public CubeFace getUp() {
         return up;
     }
 
-    CubeFace getLeft() {
+    public CubeFace getLeft() {
         return left;
     }
 
-    CubeFace getRight() {
+    public CubeFace getRight() {
         return right;
     }
 
-    CubeFace getBack() {
+    public CubeFace getBack() {
         return back;
     }
 
-    CubeFace getFront() {
+    public CubeFace getFront() {
         return front;
     }
 }

@@ -1,12 +1,14 @@
 package de.daniu;
 
+import de.daniu.domain.Cube;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public enum CubeManager {
-    INSTANCE;
+    CUBE_MANAGER;
 
     private Map<String, Cube> cubes = new LinkedHashMap<>();
 
