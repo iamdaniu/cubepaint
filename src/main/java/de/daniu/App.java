@@ -1,6 +1,5 @@
 package de.daniu;
 
-import de.daniu.domain.Cube;
 import de.daniu.gui.Frames;
 import de.daniu.gui.Navigation;
 
@@ -11,8 +10,7 @@ import java.util.stream.Stream;
  */
 public class App {
     public static void main(String[] args) {
-        Cube cube = new Cube();
-        CubeManager.CUBE_MANAGER.addCube("default", cube);
+        CubeManager.CUBE_MANAGER.addCube("default");
 
         Stream.of(
             Frames.mainFrame(),

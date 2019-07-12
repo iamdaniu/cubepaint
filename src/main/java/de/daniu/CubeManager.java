@@ -27,8 +27,8 @@ public enum CubeManager {
         return cubes.get(selectedCubename);
     }
 
-    public void addCube(String cubename, Cube cube) {
-        cubes.put(cubename, cube);
+    public void addCube(String cubename) {
+        cubes.put(cubename, new Cube());
         if (selectedCubename == null) {
             selectCube(cubename);
         }
