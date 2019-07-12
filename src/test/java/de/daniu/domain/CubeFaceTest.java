@@ -3,7 +3,6 @@ package de.daniu.domain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.IntStream;
 
@@ -19,7 +18,7 @@ class CubeFaceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6, 7, 8 })
+    @RangeSource(from = 0, to = 8)
     void setColor(int fieldIndex) {
         CubeFace face = CubeFace.filled(CubeColor.WHITE);
         face.setColor(fieldIndex, CubeColor.YELLOW);
@@ -37,7 +36,7 @@ class CubeFaceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6, 7, 8 })
+    @RangeSource(from = 0, to = 8)
     void differentFacesDontEqualAndDifferentHashcode(int fieldIndex) {
         CubeFace face = CubeFace.filled(CubeColor.WHITE);
         CubeFace other = CubeFace.filled(CubeColor.WHITE);
