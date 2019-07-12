@@ -4,10 +4,10 @@ import de.daniu.SelectedColorService;
 import de.daniu.domain.Cube;
 import de.daniu.domain.CubeColor;
 import de.daniu.domain.CubeFace;
+import de.daniu.domain.Faces;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.Function;
 
 import static de.daniu.CubeManager.CUBE_MANAGER;
 import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
@@ -26,38 +26,38 @@ class CubeButtonLayouter {
     }
 
     private static JComponent topFaceButtons() {
-        return buttons(Cube::getUp, new Dimension(40, 40), new GridLayout(3, 3), 9);
+        return buttons(Faces.UP, new Dimension(40, 40), new GridLayout(3, 3), 9);
     }
 
     private static JComponent leftFaceButtons() {
-        return buttons(Cube::getLeft, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
+        return buttons(Faces.LEFT, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
 
     private static JComponent rightFaceButtons() {
-        return inverseButtons(Cube::getRight, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
+        return inverseButtons(Faces.RIGHT, leftRightSize(), leftRightLayout(), SIDE_BUTTON_COUNT);
     }
 
     private static JComponent frontFaceButtons() {
-        return buttons(Cube::getFront, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
+        return buttons(Faces.FRONT, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
 
     private static JComponent backFaceButtons() {
-        return inverseButtons(Cube::getBack, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
+        return inverseButtons(Faces.BACK, frontBackSize(), frontBackLayout(), SIDE_BUTTON_COUNT);
     }
 
-    private static JComponent buttons(Function<Cube, CubeFace> getFace, Dimension buttonSize, LayoutManager manager, int buttonCount) {
+    private static JComponent buttons(Faces face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
         JComponent component = new JPanel(manager);
         for (int i = 0; i < buttonCount; i++) {
-            component.add(colorButton(getFace, i, buttonSize));
+            component.add(colorButton(face, i, buttonSize));
         }
         return component;
     }
 
-    private static JComponent inverseButtons(Function<Cube, CubeFace> getFace, Dimension buttonSize, LayoutManager manager, int buttonCount) {
+    private static JComponent inverseButtons(Faces face, Dimension buttonSize, LayoutManager manager, int buttonCount) {
         JComponent component = new JPanel(manager);
         // will only work for side button panel...
         for (int i = 2; i >= 0; i--) {
-            component.add(colorButton(getFace, i, buttonSize));
+            component.add(colorButton(face, i, buttonSize));
         }
         return component;
     }
@@ -78,24 +78,24 @@ class CubeButtonLayouter {
         return new GridLayout(1, 3);
     }
 
-    private static JButton colorButton(Function<Cube, CubeFace> getFace, int index, Dimension dimension) {
+    private static JButton colorButton(Faces faces, int index, Dimension dimension) {
         JButton button = new JButton();
         button.setPreferredSize(dimension);
         button.addActionListener(e -> {
             CubeColor color = SelectedColorService.SELECTED_COLORS.getSelected();
-            CubeFace face = getFace.apply(CUBE_MANAGER.getSelectedCube());
+            CubeFace face = CUBE_MANAGER.getSelectedCube().getFace(faces);
             face.setColor(index, color);
-            button.setBackground(getColor(getFace, index));
+            button.setBackground(getColor(faces, index));
         });
-        button.setBackground(getColor(getFace, index));
+        button.setBackground(getColor(faces, index));
         CUBE_MANAGER.addSelectionListener(n -> {
             Cube c = CUBE_MANAGER.getSelectedCube();
-            button.setBackground(getColor(getFace, index));
+            button.setBackground(getColor(faces, index));
         });
         return button;
     }
 
-    private static Color getColor(Function<Cube, CubeFace> getFace, int index) {
-        return COLOR_MAPPER.getColor(getFace.apply(CUBE_MANAGER.getSelectedCube()).getColor(index));
+    private static Color getColor(Faces face, int index) {
+        return COLOR_MAPPER.getColor(CUBE_MANAGER.getSelectedCube().getFace(face).getColor(index));
     }
 }

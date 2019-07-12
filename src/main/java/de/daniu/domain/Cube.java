@@ -1,21 +1,28 @@
 package de.daniu.domain;
 
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Cube {
-    private final CubeFace up = CubeFace.filled(CubeColor.YELLOW);
-    private final CubeFace left = CubeFace.filled(CubeColor.GREEN);
-    private final CubeFace right = CubeFace.filled(CubeColor.BLUE);
-    private final CubeFace back = CubeFace.filled(CubeColor.RED);
-    private final CubeFace front = CubeFace.filled(CubeColor.ORANGE);
-    private final CubeFace down = CubeFace.filled(CubeColor.WHITE);
+    private final Map<Faces, CubeFace> faces = new EnumMap<>(Faces.class);
+
+    {
+        faces.put(Faces.UP, CubeFace.filled(CubeColor.YELLOW));
+        faces.put(Faces.LEFT, CubeFace.filled(CubeColor.GREEN));
+        faces.put(Faces.RIGHT, CubeFace.filled(CubeColor.BLUE));
+        faces.put(Faces.BACK, CubeFace.filled(CubeColor.RED));
+        faces.put(Faces.FRONT, CubeFace.filled(CubeColor.ORANGE));
+        faces.put(Faces.DOWN, CubeFace.filled(CubeColor.WHITE));
+    }
 
     private static final List<Function<Cube, CubeFace>> GET_FACES =
-        Arrays.asList(Cube::getUp, Cube::getLeft, Cube::getRight, Cube::getFront, Cube::getBack);
+        Stream.of(Faces.values())
+              .map(f -> (Function<Cube, CubeFace>) c -> c.getFace(f))
+              .collect(Collectors.toList());
 
     public void copyFrom(Cube c) {
         GET_FACES.forEach(f -> {
@@ -28,27 +35,11 @@ public class Cube {
     }
 
     public Stream<CubeFace> getFaces() {
-        return Stream.of(up, right, front, down, left, back);
+        return Stream.of(Faces.values()).map(faces::get);
     }
 
-    public CubeFace getUp() {
-        return up;
-    }
-
-    public CubeFace getLeft() {
-        return left;
-    }
-
-    public CubeFace getRight() {
-        return right;
-    }
-
-    public CubeFace getBack() {
-        return back;
-    }
-
-    public CubeFace getFront() {
-        return front;
+    public CubeFace getFace(Faces face) {
+        return faces.get(face);
     }
 
     @Override
@@ -64,6 +55,6 @@ public class Cube {
 
     @Override
     public int hashCode() {
-        return Objects.hash(up, left, right, back, front, down);
+        return faces.hashCode();
     }
 }
