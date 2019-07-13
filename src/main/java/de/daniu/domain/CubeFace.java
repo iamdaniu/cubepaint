@@ -21,7 +21,13 @@ public class CubeFace {
         return facelets.get(i);
     }
 
-    static CubeFace filled(CubeColor c) {
+    public void copyFrom(CubeFace other) {
+        for (int i = 0; i < facelets.size(); i++) {
+            facelets.set(i, other.facelets.get(i));
+        }
+    }
+
+    public static CubeFace filled(CubeColor c) {
         CubeFace f = new CubeFace();
         for (int i = 0; i < 9; i++) {
             f.facelets.add(c);

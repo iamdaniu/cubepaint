@@ -28,9 +28,7 @@ public class Cube {
         GET_FACES.forEach(f -> {
             CubeFace source = f.apply(c);
             CubeFace target = f.apply(this);
-            for (int i = 0; i < 9; i++) {
-                target.setColor(i, source.getColor(i));
-            }
+            target.copyFrom(source);
         });
     }
 

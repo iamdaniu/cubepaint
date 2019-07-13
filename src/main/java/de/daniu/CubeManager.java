@@ -14,6 +14,7 @@ public enum CubeManager {
     private Map<String, Cube> cubes = new LinkedHashMap<>();
     private List<CubeListener> selectionListeners = new ArrayList<>();
     private List<CubeListener> addListeners = new ArrayList<>();
+    private List<ClearListener> clearListeners = new ArrayList<>();
     private String selectedCubename;
 
     public void selectCube(String name) {
@@ -27,8 +28,18 @@ public enum CubeManager {
         return cubes.get(selectedCubename);
     }
 
+    public void clear() {
+        cubes.clear();
+        clearListeners.forEach(Runnable::run);
+        selectedCubename = null;
+        addCube("default", new Cube());
+    }
+
     public void addCube(String cubename) {
-        cubes.put(cubename, new Cube());
+        addCube(cubename, new Cube());
+    }
+    public void addCube(String cubename, Cube cube) {
+        cubes.put(cubename, cube);
         if (selectedCubename == null) {
             selectCube(cubename);
         }
@@ -47,7 +58,11 @@ public enum CubeManager {
     public void addAddListener(CubeListener listener) {
         addListeners.add(listener);
     }
-
-    public interface CubeListener extends Consumer<String> {
+    public void addClearListener(ClearListener listener) {
+        clearListeners.add(listener);
     }
+
+    public interface CubeListener extends Consumer<String> {}
+
+    public interface ClearListener extends Runnable {}
 }

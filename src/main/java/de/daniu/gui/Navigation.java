@@ -48,6 +48,7 @@ public class Navigation {
                 nameModel.addElement(e);
             }
         });
+        CUBE_MANAGER.addClearListener(nameModel::removeAllElements);
         CUBE_MANAGER.addSelectionListener(nameModel::setSelectedItem);
         actionPanel.add(cubeList);
         cubeList.addItemListener(l -> {
