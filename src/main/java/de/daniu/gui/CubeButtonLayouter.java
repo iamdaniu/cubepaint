@@ -15,6 +15,8 @@ import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
 class CubeButtonLayouter {
 
     private static final int SIDE_BUTTON_COUNT = 3;
+    private static final int FULL = 60;
+    private static final int HALF = FULL/2;
 
     static void toComponent(Container component) {
         component.setLayout(new BorderLayout());
@@ -26,7 +28,7 @@ class CubeButtonLayouter {
     }
 
     private static JComponent topFaceButtons() {
-        return buttons(Faces.UP, new Dimension(40, 40), new GridLayout(3, 3), 9);
+        return buttons(Faces.UP, new Dimension(FULL, FULL), new GridLayout(3, 3), 9);
     }
 
     private static JComponent leftFaceButtons() {
@@ -63,11 +65,11 @@ class CubeButtonLayouter {
     }
 
     private static Dimension leftRightSize() {
-        return new Dimension(20, 40);
+        return new Dimension(HALF, FULL);
     }
 
     private static Dimension frontBackSize() {
-        return new Dimension(40, 20);
+        return new Dimension(FULL, HALF);
     }
 
     private static LayoutManager leftRightLayout() {

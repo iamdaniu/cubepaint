@@ -28,22 +28,19 @@ public enum CubeManager {
         return cubes.get(selectedCubename);
     }
 
-    public void clear() {
-        cubes.clear();
-        clearListeners.forEach(Runnable::run);
-        selectedCubename = null;
-        addCube("default", new Cube());
-    }
-
-    public void addCube(String cubename) {
-        addCube(cubename, new Cube());
-    }
     public void addCube(String cubename, Cube cube) {
         cubes.put(cubename, cube);
         if (selectedCubename == null) {
             selectCube(cubename);
         }
         addListeners.forEach(l -> l.accept(cubename));
+    }
+
+    public void clear() {
+        cubes.clear();
+        clearListeners.forEach(Runnable::run);
+        selectedCubename = null;
+        addCube("default", new Cube());
     }
     public List<String> getCubenames() {
         return new ArrayList<>(cubes.keySet());

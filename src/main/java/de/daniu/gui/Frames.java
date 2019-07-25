@@ -1,24 +1,15 @@
 package de.daniu.gui;
 
 import de.daniu.SelectedColorService;
-import de.daniu.domain.Cube;
 import de.daniu.domain.CubeColor;
-import de.daniu.domain.CubeFace;
-import de.daniu.io.Codecs;
+import de.daniu.io.FileIo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.function.Function;
 
 import static de.daniu.CubeManager.CUBE_MANAGER;
 import static de.daniu.gui.ColorMapper.COLOR_MAPPER;
-import static java.util.stream.Collectors.joining;
+import static de.daniu.io.CubeEncoder.ENCODER;
 
 public class Frames {
     public static JFrame mainFrame() {
@@ -52,43 +43,24 @@ public class Frames {
         JPanel ioPanel = new JPanel();
         JButton saveButton = new JButton("save");
         JButton loadButton = new JButton("load");
+        JPanel buttonContainer = new JPanel(new FlowLayout());
         commandContainer.add(displayButton, BorderLayout.NORTH);
         commandContainer.add(display, BorderLayout.CENTER);
-        ioPanel.add(saveButton);
-        ioPanel.add(loadButton);
-        commandContainer.add(ioPanel, BorderLayout.SOUTH);
+        commandContainer.add(buttonContainer, BorderLayout.SOUTH);
+        buttonContainer.add(loadButton);
+        buttonContainer.add(saveButton);
         frame.getContentPane().add(commandContainer, BorderLayout.SOUTH);
-        Function<Cube, String> cubeEncoder = Codecs.CubeCodec.INSTANCE::encode;
-        displayButton.addActionListener(e -> display.setText(cubeEncoder.apply(CUBE_MANAGER.getSelectedCube())));
+        displayButton.addActionListener(e -> display.setText(ENCODER.encode(CUBE_MANAGER.getSelectedCube())));
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         saveButton.addActionListener(e -> {
             if (chooser.showSaveDialog(commandContainer) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = chooser.getSelectedFile();
-                try (PrintWriter writer = new PrintWriter(new FileWriter(selectedFile, true))) {
-                    CUBE_MANAGER.getCubenames().stream()
-                                .filter(s -> !"default".equals(s))
-                                .map(n -> String.format("%s: %s", n, Codecs.CubeCodec.INSTANCE.encode(CUBE_MANAGER.getCube(n))))
-                                .forEach(writer::println);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                FileIo.INSTANCE.saveToFile(chooser.getSelectedFile());
             }
         });
         loadButton.addActionListener(e -> {
             if (chooser.showOpenDialog(commandContainer) == JFileChooser.APPROVE_OPTION) {
-                CUBE_MANAGER.clear();
-                File selectedFile = chooser.getSelectedFile();
-                try {
-                    Files.lines(Paths.get(selectedFile.getPath()))
-                            .forEach(s -> {
-                                String[] split = s.split(":");
-                                Cube cube = Codecs.CubeCodec.INSTANCE.decode(split[1].strip());
-                                CUBE_MANAGER.addCube(split[0].strip(), cube);
-                            });
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                FileIo.INSTANCE.loadFromFile(chooser.getSelectedFile());
             }
         });
     }
