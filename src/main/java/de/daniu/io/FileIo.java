@@ -20,8 +20,7 @@ public enum FileIo {
             lines.map(s -> s.split(": "))
                  .forEach(sa -> {
                      Cube decoded = ENCODER.decode(sa[1]);
-                     CUBE_MANAGER.addCube(sa[0])
-                                 .copyFrom(decoded);
+                     CUBE_MANAGER.addCube(sa[0], decoded);
                  });
         } catch (IOException e) {
             e.printStackTrace();
